@@ -3,9 +3,11 @@
 
 import os
 from flask import Flask, render_template
+from model import load
 
 app = Flask(__name__)
 app.config.from_object('setting')
+app.register_blueprint(load)
 
 @app.before_request
 def require_login():
