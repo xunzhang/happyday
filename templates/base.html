@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Rec {% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    {% endblock %}
+    <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+    <script type="text/javascript"
+          src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+</head>
+
+<body>
+    <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Rec</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/similarity">Sim</a></li>
+            </ul>
+        </div>
+    </div>
+    </nav>
+
+    <div class="container">
+        {% block body %}
+        <div align="center" class="row">
+            {% block section %}{% endblock %}
+        </div>
+        <div class="row">
+            <div class="col-md-3">{% block side_nav %}{% endblock %}</div>
+            <div class="col-md-9">{% block content %}{% endblock %}</div>
+        </div>
+        {% endblock %}
+    </div>
+
+    <hr>
+    <div id="footer">
+        <div align="center" class="container">
+            <p>Developer: <a href="mailto:lili">lma@pivotal.io</a><a href="mailto:xunzhang">hwu@douban.com</a></p>
+        </div>
+    </div>
+
+    {% block script %}
+    <script src="/static/js/jquery-1.11.0.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    {% endblock %}
+</body>
+
+</html>
