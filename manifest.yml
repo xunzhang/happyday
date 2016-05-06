@@ -1,0 +1,5 @@
+---
+applications:
+- name: rec
+  buildpack: python_buildpack
+  command: python app.py

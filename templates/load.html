@@ -1,43 +1,30 @@
 {% extends "base.html" %}
 
 {% block title %}
-    {{ super() }}- reading
+    {{ super() }}- load
 {% endblock %}
 
 {% block section %}
-<h2>title</h2>
+<h2>I. LOADING</h2>
 {% endblock %}
 
 {% block side_nav %}
 <ul>
-    <li><a href="/load/">load</a></li>
+    <li><a href="/load/">LOADING</a></li>
+    <li><a href="/load/history">LOADING HISTORY</a></li>
 </ul>
 {% endblock %}
 
 {% block content %}
-<form role="form" action="/reading/" method="post">
+<form role="form" action="/load/" method="post">
     <div class="form-group">
-        <label for="load_path">path</label>
-        <input name="load_path" type="text" class="form-control" placeholder="Enter file path in mfs" value="{{reading_predict_path}}">
+        <label for="load_path">FILE PATH</label>
+        <input name="load_path" type="text" class="form-control" placeholder="Enter your training file path" value="{{load_path}}">
     </div>
-    <button type="submit" class="btn btn-default">submit</button>
+    <button type="submit" class="btn btn-default">SUBMIT</button>
 </form>
-
-<br />
-{% if result %}
-    {% if result[0] > 0 %}
-    <div>
-        <p>HitRate: {{ result[1] }}</p>
-        <p>ARHR: {{ result[2] }}</p>
-    </div>
-    {% else %}
-    <p>Error</p>
-    {% endif %}
-{% endif %}
+<br/>
 <hr>
 <h4>Instruction</h4>
-
-<dl>
-  TODO
-</dl>
+<dl>...</dl>
 {% endblock %}
