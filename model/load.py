@@ -29,4 +29,4 @@ def load_index():
 def load_submit():
     load_path = request.form.get('load_path', '')
     foo()
-    return load_path
+    return "Load success!"
