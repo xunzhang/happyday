@@ -5,7 +5,7 @@ import os
 from flask import Flask, render_template
 from model import load, train, recommend
 
-app = Flask(__name__, static_url_path='', static_folder='images')
+app = Flask(__name__)
 app.config.from_object('setting')
 app.register_blueprint(load)
 app.register_blueprint(train)

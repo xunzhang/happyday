@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ super() }}- recommend
+{% endblock %}
+
+{% block section %}
+<h2>III. Recommendation</h2>
+{% endblock %}
+
+{% block side_nav %}
+<ul>
+    <li><a href="/recommend/">Similar Items</a></li>
+    <li><a href="/recommend/sim_user">Similar Users</a></li>
+    <li><a href="/recommend/hot">Hot Pool</a></li>
+    <li><a href="/recommend/interest">Interest</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div>
+  <form role="form" action="/recommend/sim_user" method="post">
+      <div class="form-group">
+          <label for="uid">UserID</label>
+          <input name="uid" type="text" class="form-control" placeholder="Enter UserID" value="{{uid}}">
+      </div>
+      <button type="submit" class="btn btn-default">REC</button>
+  </form>
+</div>
+<br/>
+<hr>
+<h4>Instruction</h4>
+{% endblock %}

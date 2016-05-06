@@ -1,39 +1,33 @@
 import os
-import util
-import traceback
-from flask import Blueprint, render_template, request, g
-from operator import itemgetter
+from flask import Blueprint, render_template, request
+from util import PGDB
+from load import DATA_TABLE
 
-train = Blueprint('train', __name__, template_folder = 'templates')
-
-def mf():
-  db = util.db_connect()
-
-  dropmodelsql = "drop table if exists netflix_sample_model"
-  util.db_query(db, dropmodelsql)
-
-  kdimv = request.form.get('kdim')
-  alphav = request.form.get('alpha')
-  iterv = request.form.get('iter')
-#sql = "SELECT madlib.lmf_igd_run('netflix_sample_model', 'netflix_sample', 'uid', 'mid', 'rating', 10727, 2244," + kdimv + "," + alphav + ", 0.1 , " + iterv + ", 1e-4);"
-  sql = "SELECT madlib.lmf_igd_run('netflix_sample_model', 'netflix_sample', 'uid', 'mid', 'rating', 10727, 2244, %s, %s, 0.1, %s, 1e-4)" % (kdimv, alphav, iterv)
-  print sql
-  util.db_query(db, sql) 
-
-  dropunfoldsql = "drop table if exists netflix_sample_model_structured"
-  util.db_query(db, dropunfoldsql)
-
-  unfoldsql = "create table netflix_sample_model_structured as ( select generate_series(1,2244) as mid, unnest_2d_1d(matrix_u[1:2244][1:%s]) as fac from netflix_sample_model where id = 1)" % iterv
-  util.db_query(db, unfoldsql)
+def mf(kdim, alpha, iterations):
+    db = PGDB()
+    db.connect_default()
+    db.drop_table(DATA_TABLE+'_model')
+    M = str(db.execute('SELECT max(uid) from %s' %
+                       DATA_TABLE).getresult()[0][0])
+    N = str(db.execute('SELECT max(iid) from %s' %
+                       DATA_TABLE).getresult()[0][0])
+    train_sql = "SELECT madlib.lmd_igd_run(%s, %s, 'uid', 'iid', 'rating', %s, %s, %s, %s, 0.1, %s, 1e-5)"
+    db.execute(train_sql % (M, N, kdim, alpha, iterations))
+    db.drop_table(DATA_TABLE + '_structured')
+    unfold_sql = "CREATE TABLE %s AS (SELECT generate_series(1, %s) AS iid, unnest_2d_1d(matrix_u[1:%s][1:%s]) AS fac from %s WHERE id = 1)" 
+    db.execute(unfold_sql % (DATA_TABLE + '_model_structured', M, M,
+                             request.form.get('kdim'), DATA_TABLE + '_model'))
 
 def cal_sim():
-  db = util.db_connect()
+    db = PGDB()
+    db.connect_default()
+    db.drop_table(DATA_TABLE+'_item_similarity')
+    calsim_sql = 'CREATE TABLE %s AS (SELECT t1.iid AS iid1, t2.iid AS iid2, madlib.cosine_similarity(t1.fac, t2.fac) AS sim FROM %s AS t1, %s AS t2 WHERE t1.iid < t2.iid ORDER BY t1.iid, sim DESC, t2.iid)'
+    db.execute(calsim_sql % (DATA_TABLE + '_item_similarity',
+                             DATA_TABLE + '_model_structured',
+                             DATA_TABLE + '_model_structured'))
 
-  dropsql = 'drop table if exists netflix_sample_movie_similarity'
-  util.db_query(db, dropsql)
-
-  sql = 'CREATE TABLE netflix_sample_movie_similarity AS ( SELECT t1.mid AS mid1, t2.mid As mid2, madlib.cosine_similarity(t1.fac, t2.fac) as sim FROM netflix_sample_model_structured AS t1, netflix_sample_model_structured AS t2 WHERE t1.mid < t2.mid ORDER BY t1.mid, sim DESC, t2.mid)'
-  util.db_query(db, sql)
+train = Blueprint('train', __name__, template_folder = 'templates')
 
 @train.route('/train/')
 def train_index():
@@ -41,7 +35,7 @@ def train_index():
 
 @train.route('/train/', methods = ['POST'])
 def train_submit():
-    mf()
+    mf(request.form.get('kdim'), request.form.get('alpha'), request.form.get('iter'))
     return 'Latent Factor Successfully Generated!'
 
 @train.route('/train/sim')

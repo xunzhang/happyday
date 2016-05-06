@@ -1,23 +1,20 @@
 import os
-import util
-import traceback
-from flask import Blueprint, render_template, request, g
-from operator import itemgetter
+from flask import Blueprint, render_template, request
+from util import PGDB
+from config import LOGIN_KEY, HOST, TABLE_PREFIX, DELIMITER
 
-def foo():
-  v = request.form.get('load_path')
-  print v
-#  cmd = 'ssh -i hawqdemo.pem ec2-user@ec2-52-39-229-191.us-west-2.compute.amazonaws.com "cd /tmpData/; wget %s -O tData"' % v
-  cmd = 'ssh -i hawqdemo.pem ec2-user@ec2-52-39-229-191.us-west-2.compute.amazonaws.com "cd /tmpData/; wget %s -O tData"' 
-  os.system(cmd % v)
+DATA_TABLE=''
 
-  db = util.db_connect()
-  util.createtable(db)
-  sql = "copy netflix_sample from '/tmpData/tData' delimiter ','"
-  util.db_query(db, sql)
-
-#  print v
-#  return v
+def load_data(fn):
+    tbl = TABLE_PREFIX + fn.split('/')[-1]
+    DATA_TABLE = tbl
+    cmd = 'ssh -i %s %s "wget %s -O /tmpData/%s"'
+    os.system(cmd % (LOGIN_KEY, HOST, fn, 'dat_' + fn.split('/')[-1]))
+    db = PGDB()
+    db.connect_default()
+    db.drop_table(tbl)
+    db.create_init_table(tbl)
+    db.copy(tbl, '/tmpData/dat_' + fn.split('/')[-1], DELIMITER)
 
 load = Blueprint('load', __name__, template_folder = 'templates')
 
@@ -27,6 +24,5 @@ def load_index():
 
 @load.route('/load/', methods = ['POST'])
 def load_submit():
-    load_path = request.form.get('load_path', '')
-    foo()
-    return "Load success!"
+    load_data(request.form.get('load_path'))
+    return "Loading Successfully Finished!"
