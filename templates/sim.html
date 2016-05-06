@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ super() }}- train
+{% endblock %}
+
+{% block section %}
+<h2>II. Training Model</h2>
+{% endblock %}
+
+{% block side_nav %}
+<ul>
+    <li><a href="/train/">Compute Latent Factors</a></li>
+    <li><a href="/train/sim">Compute Factor Similarity</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div>
+<form role="form" action="/train/sim/" method="post">
+    <button type="submit" class="btn btn-default">COMPUTE</button>
+</form>
+</div>
+<br/>
+<hr>
+<h4>Instruction</h4>
+{% endblock %}

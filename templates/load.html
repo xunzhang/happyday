@@ -18,7 +18,7 @@
 {% block content %}
 <form role="form" action="/load/" method="post">
     <div class="form-group">
-        <label for="load_path">FILE PATH</label>
+        <label for="load_path">DATA PATH</label>
         <input name="load_path" type="text" class="form-control" placeholder="Enter your training file path" value="{{load_path}}">
     </div>
     <button type="submit" class="btn btn-default">SUBMIT</button>
@@ -26,5 +26,18 @@
 <br/>
 <hr>
 <h4>Instruction</h4>
-<dl>...</dl>
+<dl>DATA FORMAT:<br>
+  <font color='green'>
+  user1,item1,rating1<br>
+  user2,item2,rating2<br>
+  user1,item3,rating3<br>
+  user1,item4,rating4<br>
+  user2,item5,rating5<br>
+  user3,item6,rating6<br>
+  user4,item7,rating7<br>
+  user4,item2,rating8<br>
+  user5,item3,rating9<br>
+  ...<br>
+  </font>
+  You can use any delimiter as you like.<dl>
 {% endblock %}
