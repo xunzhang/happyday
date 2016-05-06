@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ super() }}- train
+{% endblock %}
+
+{% block section %}
+<h2>II. Training Model</h2>
+{% endblock %}
+
+{% block side_nav %}
+<ul>
+    <li><a href="/train/">Compute Latent Factors</a></li>
+    <li><a href="/train/sim">Compute Factor Similarity</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div>
+<form role="form" action="/train/" method="post">
+    <div class="form-group">
+        <label for="kdim">Factor Dimensions</label>
+        <input name="kdim" type="text" class="form-control" placeholder="The rank of desired approximation" value="{{kdim}}">
+    </div>
+    <div class="form-group">
+        <label for="alpha">Learning Rate</label>
+        <input name="alpha" type="text" class="form-control" placeholder="Hyper-parameter that decides how aggressive the gradient steps are" value="{{alpha}}">
+    </div>
+    <div class="form-group">
+        <label for="iter">Iterations</label>
+        <input name="iter" type="text" class="form-control" placeholder="Maximum number if iterations to perform regardless of convergence" value="{{iter}}">
+    </div>
+    <button type="submit" class="btn btn-default">SUBMIT</button>
+</form>
+</div>
+<br/>
+<hr>
+<h4>Instruction</h4>
+<dl>Check out the following link for more detail: <a href="http://madlib.incubator.apache.org/docs/master/group__grp__lmf.html">User Documentation for MADlib: Matrix Factorzation</a></dl>
+{% endblock %}
